@@ -40,31 +40,26 @@ export default function LoginPage() {
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-zinc-50 px-4">
-            {/* Background blobs */}
-            <div className="pointer-events-none fixed inset-0 overflow-hidden">
-                <div className="absolute -top-32 -left-32 h-96 w-96 rounded-full bg-cyan-200/50 blur-3xl" />
-                <div className="absolute bottom-0 right-0 h-80 w-80 rounded-full bg-blue-200/40 blur-3xl" />
-            </div>
-
+        <div className="min-h-screen flex items-center justify-center bg-background text-foreground px-4">
             <div className="relative w-full max-w-sm">
                 {/* Logo / Brand */}
                 <div className="mb-8 text-center">
-                    <span className="inline-block text-xs font-bold uppercase tracking-[0.18em] text-cyan-700 bg-cyan-100 px-3 py-1 rounded-full mb-4">
-                        Private Knowledge AI
+                    <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-accent mb-4">
+                        <span className="h-1.5 w-1.5 rounded-full bg-accent" />
+                        Private knowledge AI
                     </span>
-                    <h1 className="text-4xl font-bold text-zinc-900 tracking-tight">VaultMind</h1>
-                    <p className="text-sm text-zinc-500 mt-2">Sign in to your workspace</p>
+                    <h1 className="text-4xl font-semibold tracking-tight">VaultMind</h1>
+                    <p className="text-sm text-muted mt-2">Sign in to your workspace</p>
                 </div>
 
                 {/* Card */}
-                <div className="rounded-3xl border border-zinc-200 bg-white shadow-xl px-8 py-9">
+                <div className="rounded-2xl border border-black/[.06] dark:border-white/[.08] bg-card shadow-sm px-8 py-9">
                     <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-5">
                         {/* Username */}
                         <div className="flex flex-col gap-1.5">
                             <label
                                 htmlFor="vm-username"
-                                className="text-xs font-bold uppercase tracking-widest text-zinc-500"
+                                className="text-xs font-semibold uppercase tracking-widest text-muted"
                             >
                                 Username
                             </label>
@@ -77,7 +72,7 @@ export default function LoginPage() {
                                 onChange={(e) => setUsername(e.target.value)}
                                 placeholder="e.g. EUZadmin"
                                 required
-                                className="w-full rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm text-zinc-900 placeholder-zinc-400 outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-100 transition"
+                                className="w-full rounded-xl border border-black/10 dark:border-white/15 bg-background px-4 py-3 text-sm text-foreground placeholder-muted/70 outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition"
                             />
                         </div>
 
@@ -85,7 +80,7 @@ export default function LoginPage() {
                         <div className="flex flex-col gap-1.5">
                             <label
                                 htmlFor="vm-password"
-                                className="text-xs font-bold uppercase tracking-widest text-zinc-500"
+                                className="text-xs font-semibold uppercase tracking-widest text-muted"
                             >
                                 Password
                             </label>
@@ -98,12 +93,12 @@ export default function LoginPage() {
                                     onChange={(e) => setPassword(e.target.value)}
                                     placeholder="••••••••"
                                     required
-                                    className="w-full rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-3 pr-12 text-sm text-zinc-900 placeholder-zinc-400 outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-100 transition"
+                                    className="w-full rounded-xl border border-black/10 dark:border-white/15 bg-background px-4 py-3 pr-12 text-sm text-foreground placeholder-muted/70 outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition"
                                 />
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword((p) => !p)}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 transition text-xs font-medium select-none"
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-foreground transition text-xs font-medium select-none"
                                     aria-label={showPassword ? "Hide password" : "Show password"}
                                 >
                                     {showPassword ? "Hide" : "Show"}
@@ -115,7 +110,7 @@ export default function LoginPage() {
                         {error && (
                             <div
                                 role="alert"
-                                className="flex items-center gap-2 rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700"
+                                className="flex items-center gap-2 rounded-xl bg-red-500/10 border border-red-500/30 px-4 py-3 text-sm text-red-500"
                             >
                                 <svg className="h-4 w-4 shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clipRule="evenodd" />
@@ -128,7 +123,7 @@ export default function LoginPage() {
                         <button
                             type="submit"
                             disabled={loading || !username.trim() || !password}
-                            className="mt-1 w-full rounded-full bg-[#0D1B2A] py-3 text-sm font-bold text-white hover:bg-opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:-translate-y-0.5 shadow-lg"
+                            className="mt-1 w-full rounded-full bg-foreground text-background py-3 text-sm font-semibold hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                         >
                             {loading ? (
                                 <span className="flex items-center justify-center gap-2">
@@ -146,9 +141,9 @@ export default function LoginPage() {
                 </div>
 
                 {/* Default credentials hint — remove in production */}
-                <p className="mt-5 text-center text-xs text-zinc-400">
-                    Default admin: <span className="font-mono font-semibold text-zinc-600">EUZadmin</span> /{" "}
-                    <span className="font-mono font-semibold text-zinc-600">admin</span>
+                <p className="mt-5 text-center text-xs text-muted/80">
+                    Default admin: <span className="font-mono font-semibold text-muted">EUZadmin</span> /{" "}
+                    <span className="font-mono font-semibold text-muted">admin</span>
                 </p>
             </div>
         </div>

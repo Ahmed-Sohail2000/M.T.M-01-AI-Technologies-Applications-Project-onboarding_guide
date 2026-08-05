@@ -25,12 +25,13 @@ export async function sendChat(question: string, history: string[] = [], token?:
         body: JSON.stringify({ question, history }),
     });
     if (!res.ok) {
-        let detail = '';
+        const bodyText = await res.text();
+        let detail = bodyText;
         try {
-            const data = await res.json();
+            const data = JSON.parse(bodyText);
             detail = data?.detail || data?.message || JSON.stringify(data);
         } catch {
-            detail = await res.text();
+            // body wasn't JSON; use the raw text as-is
         }
         throw new Error(`Chat failed (${res.status}): ${detail || 'Unknown error'}`);
     }

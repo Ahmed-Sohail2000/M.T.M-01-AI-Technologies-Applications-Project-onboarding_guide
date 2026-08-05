@@ -9,12 +9,24 @@
   --text-muted: #666666;
 }
 
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #05070A;
+    --foreground: #EDF1F7;
+    --primary: #0D1B2A;
+    --accent: #22D3EE;
+    --card: #12181f;
+    --text-muted: #9CA6B4;
+  }
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-primary: var(--primary);
   --color-accent: var(--accent);
   --color-card: var(--card);
+  --color-muted: var(--text-muted);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }

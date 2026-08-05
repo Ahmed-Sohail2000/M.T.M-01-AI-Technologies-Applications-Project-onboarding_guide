@@ -43,256 +43,272 @@ export default function HomeClient({ departments }: HomeClientProps) {
             .forEach((k) => localStorage.removeItem(k));
         setAuth(null);
         setIsChatOpen(false);
+        router.refresh();
     }
 
     const onboardingSteps = [
         {
             title: "Meet VaultMind",
             description: "Search your company knowledge with guided prompts and grounded answers.",
-            chipClassName: "bg-cyan-100",
         },
         {
-            title: "Choose A Workspace",
+            title: "Choose a workspace",
             description: "Open your department context and focus on role-specific onboarding guidance.",
-            chipClassName: "bg-blue-100",
         },
         {
-            title: "Get Source-Backed Help",
+            title: "Get source-backed help",
             description: "Ask questions and act confidently using evidence pulled from your internal docs.",
-            chipClassName: "bg-zinc-100",
         },
     ] as const;
 
     useEffect(() => {
         const interval = window.setInterval(() => {
             setActiveOnboardingStep((prev) => (prev + 1) % onboardingSteps.length);
-        }, 2800);
+        }, 3200);
 
         return () => window.clearInterval(interval);
     }, [onboardingSteps.length]);
 
     const currentStep = onboardingSteps[activeOnboardingStep];
 
-    return (
-        <div className="relative min-h-screen bg-zinc-50 dark:bg-black py-16 px-6 md:px-8 font-sans overflow-hidden">
-            <div className="pointer-events-none absolute inset-0 opacity-60">
-                <div className="absolute -top-24 -left-24 h-72 w-72 rounded-full bg-cyan-200/60 blur-3xl" />
-                <div className="absolute top-20 right-0 h-80 w-80 rounded-full bg-blue-200/50 blur-3xl" />
-            </div>
+    const navLinks = [
+        { href: "/documents", label: "Documents" },
+        { href: "/integrations", label: "Integrations" },
+        { href: "/docs", label: "User Guide" },
+    ];
 
-            <div className="relative w-full max-w-5xl mx-auto flex flex-col gap-10">
-                <header className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-8 items-center rounded-3xl border border-zinc-200/80 bg-white/85 backdrop-blur-sm p-8 shadow-xl">
-                    <div className="text-left">
-                        <p className="inline-block text-xs font-bold uppercase tracking-[0.18em] text-cyan-700 bg-cyan-100 px-3 py-1 rounded-full mb-4">
-                            Private Knowledge AI
-                        </p>
-                        <h1 className="text-4xl md:text-5xl font-bold leading-tight tracking-tight text-black dark:text-zinc-50">
-                            VaultMind
-                        </h1>
-                        <p className="text-lg leading-7 text-black/70 dark:text-zinc-400 mt-3 max-w-3xl">
-                            Private, local-first AI assistant for internal company knowledge. Explore departmental workspaces,
-                            onboard faster, and chat with grounded responses from your document base.
-                        </p>
-                        {/* Auth badge */}
+    return (
+        <div className="min-h-screen bg-background text-foreground font-sans">
+            {/* Nav */}
+            <header className="sticky top-0 z-20 border-b border-black/[.06] dark:border-white/[.08] bg-background/80 backdrop-blur-md">
+                <nav className="max-w-6xl mx-auto flex items-center justify-between px-6 md:px-8 h-16">
+                    <Link href="/" className="flex items-center gap-2.5">
+                        <span className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
+                            <span className="h-3 w-3 rounded-full bg-accent" />
+                        </span>
+                        <span className="text-base font-semibold tracking-tight">VaultMind</span>
+                    </Link>
+
+                    <div className="hidden md:flex items-center gap-8">
+                        {navLinks.map((link) => (
+                            <Link
+                                key={link.href}
+                                href={link.href}
+                                className="text-sm font-medium text-muted hover:text-foreground transition-colors"
+                            >
+                                {link.label}
+                            </Link>
+                        ))}
+                    </div>
+
+                    <div className="flex items-center gap-3">
                         {auth ? (
-                            <div className="flex items-center gap-2 mb-4">
-                                <div className="flex items-center gap-2 rounded-full border border-zinc-200 bg-zinc-50 px-3 py-1.5 shadow-sm">
-                                    <span className="h-6 w-6 rounded-full bg-cyan-500 flex items-center justify-center text-white text-xs font-bold select-none">
+                            <div className="flex items-center gap-3">
+                                <div className="flex items-center gap-2">
+                                    <span className="h-7 w-7 rounded-full bg-primary flex items-center justify-center text-white text-xs font-semibold select-none">
                                         {auth.displayName.charAt(0).toUpperCase()}
                                     </span>
-                                    <span className="text-sm font-semibold text-zinc-800">{auth.displayName}</span>
+                                    <span className="hidden sm:inline text-sm font-medium">{auth.displayName}</span>
                                     {auth.role === "ADMIN" && (
-                                        <span className="text-[10px] font-bold uppercase tracking-widest text-cyan-700 bg-cyan-100 px-2 py-0.5 rounded-full">Admin</span>
+                                        <span className="hidden sm:inline text-[10px] font-semibold uppercase tracking-wider text-accent border border-accent/40 px-1.5 py-0.5 rounded-full">
+                                            Admin
+                                        </span>
                                     )}
                                 </div>
                                 <button
                                     onClick={handleLogout}
-                                    className="text-xs font-semibold text-zinc-500 hover:text-red-500 transition-colors underline underline-offset-2"
+                                    className="text-sm font-medium text-muted hover:text-foreground transition-colors"
                                 >
                                     Sign out
                                 </button>
                             </div>
-                        ) : null}
+                        ) : (
+                            <Link
+                                href="/login"
+                                className="px-4 py-2 text-sm font-semibold rounded-full bg-foreground text-background hover:opacity-90 transition-opacity"
+                            >
+                                Sign in
+                            </Link>
+                        )}
+                    </div>
+                </nav>
+            </header>
 
-                        <div className="flex flex-wrap gap-4 mt-6">
+            <main className="max-w-6xl mx-auto px-6 md:px-8">
+                {/* Hero */}
+                <section className="grid grid-cols-1 lg:grid-cols-[1.05fr_0.95fr] gap-12 items-center py-16 md:py-24">
+                    <div>
+                        <p className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-accent mb-5">
+                            <span className="h-1.5 w-1.5 rounded-full bg-accent" />
+                            Private knowledge AI
+                        </p>
+                        <h1 className="text-4xl md:text-5xl font-semibold leading-[1.08] tracking-tight">
+                            Your company&apos;s knowledge,
+                            <br className="hidden md:block" /> answered instantly.
+                        </h1>
+                        <p className="text-lg leading-7 text-muted mt-5 max-w-xl">
+                            A private AI assistant for internal knowledge, backed by NVIDIA NIM or a local LM
+                            Studio model — never public LLM APIs. Explore department workspaces and get
+                            grounded, cited answers from your own documents.
+                        </p>
+
+                        <div className="flex flex-wrap items-center gap-3 mt-8">
                             <button
                                 onClick={() => setIsChatOpen((prev) => !prev)}
-                                className="px-8 py-3 bg-primary text-white rounded-full font-bold hover:bg-opacity-90 hover:-translate-y-0.5 transition-all shadow-xl"
+                                className="px-6 py-3 bg-foreground text-background rounded-full font-semibold text-sm hover:opacity-90 transition-opacity"
                             >
-                                {isChatOpen ? "Hide Assistant" : "Open Assistant"}
+                                {isChatOpen ? "Hide assistant" : "Ask VaultMind"}
                             </button>
                             <Link
                                 href="/documents"
-                                className="px-8 py-3 bg-white text-black border border-zinc-300 rounded-full font-bold hover:bg-zinc-100 hover:-translate-y-0.5 transition-all shadow-xl"
+                                className="px-6 py-3 border border-black/10 dark:border-white/15 rounded-full font-semibold text-sm hover:border-black/25 dark:hover:border-white/30 transition-colors"
                             >
-                                Upload Docs
+                                Upload documents
                             </Link>
-                            <Link
-                                href="/integrations"
-                                className="px-8 py-3 bg-white text-black border border-zinc-300 rounded-full font-bold hover:bg-zinc-100 hover:-translate-y-0.5 transition-all shadow-xl"
-                            >
-                                Integrations
-                            </Link>
-                            <Link
-                                href="/docs"
-                                className="px-8 py-3 bg-white text-black border border-zinc-300 rounded-full font-bold hover:bg-zinc-100 hover:-translate-y-0.5 transition-all shadow-xl"
-                            >
-                                User Guide
-                            </Link>
-                            {!auth ? (
-                                <Link
-                                    href="/login"
-                                    className="px-8 py-3 bg-cyan-500 text-white rounded-full font-bold hover:bg-cyan-600 hover:-translate-y-0.5 transition-all shadow-xl"
-                                >
-                                    Sign In
-                                </Link>
-                            ) : null}
                         </div>
                     </div>
 
-                    <div className="relative h-90 w-full max-w-90 mx-auto">
-                        <div className="absolute inset-0 rounded-4xl bg-linear-to-br from-cyan-100 to-blue-100 border border-cyan-200 shadow-inner" />
-
-                        <div className="absolute top-5 left-5 right-5 h-62.5 rounded-[1.75rem] bg-cyan-400/80 shadow-2xl -rotate-6" />
-                        <div className="absolute top-9 left-6 right-6 h-62.5 rounded-[1.75rem] bg-blue-500/80 shadow-2xl rotate-[4deg]" />
-
-                        <div className="absolute top-12 left-7 right-7 h-62.5 rounded-[1.75rem] bg-white p-6 shadow-2xl border border-zinc-100">
-                            <p className="text-xs uppercase tracking-[0.2em] text-zinc-400 font-bold">Onboarding</p>
-                            <h3 className="text-2xl font-extrabold text-zinc-900 mt-2 transition-all duration-300">{currentStep.title}</h3>
-                            <p className="text-sm text-zinc-600 mt-2 leading-relaxed">
+                    <div className="relative mx-auto w-full max-w-sm">
+                        <div className="rounded-2xl border border-black/[.06] dark:border-white/[.08] bg-card shadow-sm p-6">
+                            <p className="text-xs uppercase tracking-[0.14em] text-muted font-semibold">Onboarding</p>
+                            <h3 className="text-xl font-semibold mt-2 transition-all duration-300">{currentStep.title}</h3>
+                            <p className="text-sm text-muted mt-2 leading-relaxed min-h-10">
                                 {currentStep.description}
                             </p>
 
-                            <div className="mt-5 grid grid-cols-3 gap-2">
+                            <div className="mt-6 flex items-center gap-2">
                                 {onboardingSteps.map((step, idx) => (
-                                    <div
+                                    <span
                                         key={step.title}
-                                        className={`h-16 rounded-xl transition-all duration-300 ${step.chipClassName} ${idx === activeOnboardingStep ? "ring-2 ring-cyan-500 scale-[1.03]" : "opacity-80"}`}
+                                        className={`h-1.5 rounded-full transition-all duration-300 ${idx === activeOnboardingStep ? "w-8 bg-accent" : "w-1.5 bg-black/10 dark:bg-white/15"
+                                            }`}
                                     />
                                 ))}
                             </div>
-
-                            <div className="mt-6 flex items-center justify-between">
-                                <div className="flex gap-2">
-                                    {onboardingSteps.map((step, idx) => (
-                                        <span
-                                            key={`dot-${step.title}`}
-                                            className={`h-2.5 rounded-full transition-all duration-300 ${idx === activeOnboardingStep ? "w-6 bg-cyan-500" : "w-2.5 bg-zinc-300"}`}
-                                        />
-                                    ))}
-                                </div>
-                                <span className="text-xs font-bold text-zinc-500">Step {activeOnboardingStep + 1}/{onboardingSteps.length}</span>
-                            </div>
                         </div>
                     </div>
-                </header>
+                </section>
 
                 {isChatOpen && (
-                    <section className="w-full">
+                    <section className="pb-16">
                         <ChatBox title="VaultMind Assistant" />
                     </section>
                 )}
 
-                <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="rounded-2xl bg-cyan-50 border border-cyan-200 p-5">
-                        <p className="text-xs uppercase tracking-[0.18em] text-cyan-700 font-bold">01 Discover</p>
-                        <p className="mt-2 text-sm text-zinc-700">Browse department workspaces and locate relevant internal domains quickly.</p>
-                    </div>
-                    <div className="rounded-2xl bg-blue-50 border border-blue-200 p-5">
-                        <p className="text-xs uppercase tracking-[0.18em] text-blue-700 font-bold">02 Ask</p>
-                        <p className="mt-2 text-sm text-zinc-700">Ask context-aware questions and iterate using conversation history.</p>
-                    </div>
-                    <div className="rounded-2xl bg-zinc-100 border border-zinc-200 p-5">
-                        <p className="text-xs uppercase tracking-[0.18em] text-zinc-700 font-bold">03 Act</p>
-                        <p className="mt-2 text-sm text-zinc-700">Use source-backed answers for onboarding, compliance, and operations tasks.</p>
-                    </div>
-                </section>
-
-                <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {departments.map((department) => (
-                        <Link
-                            key={department.id}
-                            href={`/departments/${department.id}`}
-                            className="block rounded-2xl border bg-white/90 dark:bg-zinc-900 p-6 hover:border-blue-400 hover:shadow-lg transition-all"
-                        >
-                            <h2 className="text-xl font-bold mb-2">{department.name}</h2>
-                            <p className="text-zinc-700 dark:text-zinc-300 mb-2">{department.description}</p>
-                            <p className="text-sm text-zinc-500 dark:text-zinc-400">{department.info}</p>
-                        </Link>
+                {/* How it works */}
+                <section className="grid grid-cols-1 md:grid-cols-3 gap-6 pb-20">
+                    {[
+                        { step: "01", title: "Discover", body: "Browse department workspaces and locate relevant internal domains quickly." },
+                        { step: "02", title: "Ask", body: "Ask context-aware questions and iterate using conversation history." },
+                        { step: "03", title: "Act", body: "Use source-backed answers for onboarding, compliance, and operations tasks." },
+                    ].map((item) => (
+                        <div key={item.step} className="rounded-2xl border border-black/[.06] dark:border-white/[.08] bg-card p-6">
+                            <span className="text-xs font-semibold text-accent tracking-[0.14em]">{item.step}</span>
+                            <h3 className="text-base font-semibold mt-2">{item.title}</h3>
+                            <p className="mt-2 text-sm text-muted leading-relaxed">{item.body}</p>
+                        </div>
                     ))}
                 </section>
 
-                <section className="w-full max-w-4xl bg-zinc-100 p-8 rounded-3xl border border-zinc-200 text-left">
-                    <h2 className="text-2xl font-bold text-black mb-4">Who is VaultMind for?</h2>
-                    <p className="text-zinc-700 mb-6">
-                        Built for organizations that manage sensitive internal knowledge and need private AI workflows
-                        with secure, role-aware access.
-                    </p>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div className="p-4 bg-white rounded-xl shadow-sm border border-zinc-200">
-                            <span className="text-accent font-bold block mb-1">Operations Teams</span>
-                            <p className="text-sm text-zinc-600">Get consistent answers from policies, SOPs, and internal docs.</p>
+                {/* Departments */}
+                {departments.length > 0 && (
+                    <section className="pb-20">
+                        <div className="flex items-end justify-between mb-6">
+                            <h2 className="text-2xl font-semibold tracking-tight">Department workspaces</h2>
                         </div>
-                        <div className="p-4 bg-white rounded-xl shadow-sm border border-zinc-200">
-                            <span className="text-accent font-bold block mb-1">Compliance and IT</span>
-                            <p className="text-sm text-zinc-600">Keep documents local with secure infrastructure and governance.</p>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {departments.map((department) => (
+                                <Link
+                                    key={department.id}
+                                    href={`/departments/${department.id}`}
+                                    className="group block rounded-2xl border border-black/[.06] dark:border-white/[.08] bg-card p-6 hover:border-accent/50 hover:shadow-sm transition-all"
+                                >
+                                    <h3 className="text-lg font-semibold group-hover:text-accent transition-colors">{department.name}</h3>
+                                    <p className="text-sm text-muted mt-1.5">{department.description}</p>
+                                    <p className="text-xs text-muted/80 mt-2">{department.info}</p>
+                                </Link>
+                            ))}
                         </div>
-                        <div className="p-4 bg-white rounded-xl shadow-sm border border-zinc-200">
-                            <span className="text-accent font-bold block mb-1">New Employee Onboarding</span>
-                            <p className="text-sm text-zinc-600">Help hires find internal knowledge faster through guided Q&A.</p>
+                    </section>
+                )}
+
+                {/* Who it's for */}
+                <section className="pb-20">
+                    <div className="rounded-3xl border border-black/[.06] dark:border-white/[.08] bg-card p-8 md:p-10">
+                        <h2 className="text-2xl font-semibold tracking-tight mb-3">Who is VaultMind for?</h2>
+                        <p className="text-muted mb-8 max-w-2xl">
+                            Built for organizations that manage sensitive internal knowledge and need private AI
+                            workflows with secure, role-aware access.
+                        </p>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            {[
+                                { title: "Operations teams", body: "Get consistent answers from policies, SOPs, and internal docs." },
+                                { title: "Compliance and IT", body: "Keep documents local with secure infrastructure and governance." },
+                                { title: "New employee onboarding", body: "Help hires find internal knowledge faster through guided Q&A." },
+                            ].map((item) => (
+                                <div key={item.title}>
+                                    <span className="font-semibold block mb-1.5">{item.title}</span>
+                                    <p className="text-sm text-muted leading-relaxed">{item.body}</p>
+                                </div>
+                            ))}
                         </div>
                     </div>
                 </section>
 
-                <section className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
-                    <div className="p-8 rounded-3xl bg-primary text-white shadow-xl text-left ring-1 ring-white/10">
-                        <div className="text-3xl mb-4">🔒</div>
-                        <h3 className="text-xl font-bold mb-3">Local-First AI</h3>
-                        <p className="text-sm opacity-90 leading-relaxed">
-                            Data stays inside your environment across ingestion, retrieval, and answer generation.
-                        </p>
-                    </div>
-                    <div className="p-8 rounded-3xl bg-primary text-white shadow-xl text-left ring-1 ring-white/10">
-                        <div className="text-3xl mb-4">🧭</div>
-                        <h3 className="text-xl font-bold mb-3">Grounded Responses</h3>
-                        <p className="text-sm opacity-90 leading-relaxed">
-                            RAG answers are anchored to indexed company documents and source context.
-                        </p>
-                    </div>
-                    <div className="p-8 rounded-3xl bg-primary text-white shadow-xl text-left ring-1 ring-white/10">
-                        <div className="text-3xl mb-4">📚</div>
-                        <h3 className="text-xl font-bold mb-3">Department Workspaces</h3>
-                        <p className="text-sm opacity-90 leading-relaxed">
-                            Dedicated spaces provide focused prompts and assistant behavior per business unit.
-                        </p>
-                    </div>
+                {/* Feature highlights */}
+                <section className="grid grid-cols-1 md:grid-cols-3 gap-6 pb-20">
+                    {[
+                        { title: "Local-first AI", body: "Data stays inside your environment across ingestion, retrieval, and answer generation." },
+                        { title: "Grounded responses", body: "RAG answers are anchored to indexed company documents and source context." },
+                        { title: "Department workspaces", body: "Dedicated spaces provide focused prompts and assistant behavior per business unit." },
+                    ].map((item) => (
+                        <div key={item.title} className="rounded-2xl border border-black/[.06] dark:border-white/[.08] bg-card p-6">
+                            <span className="h-2 w-2 rounded-full bg-accent inline-block mb-4" />
+                            <h3 className="text-base font-semibold mb-2">{item.title}</h3>
+                            <p className="text-sm text-muted leading-relaxed">{item.body}</p>
+                        </div>
+                    ))}
                 </section>
 
-                <section className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+                {/* Secondary links */}
+                <section className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-24">
                     <Link
                         href="/documents"
-                        className="group flex flex-col gap-3 rounded-3xl border border-zinc-200 bg-white p-7 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all"
+                        className="group flex flex-col gap-3 rounded-2xl border border-black/[.06] dark:border-white/[.08] bg-card p-7 hover:border-accent/50 hover:shadow-sm transition-all"
                     >
-                        <div className="text-3xl">📂</div>
-                        <h3 className="text-xl font-bold text-black group-hover:text-accent transition-colors">Document Ingestion</h3>
-                        <p className="text-sm text-zinc-500 leading-relaxed">
-                            Upload PDFs, Word documents, Markdown files, and CSVs. Each document is automatically chunked, embedded, and stored in the knowledge base for instant retrieval.
+                        <h3 className="text-lg font-semibold group-hover:text-accent transition-colors">Document ingestion</h3>
+                        <p className="text-sm text-muted leading-relaxed">
+                            Upload PDFs, Word documents, Markdown files, and CSVs. Each document is automatically
+                            chunked, embedded, and stored in the knowledge base for instant retrieval.
                         </p>
-                        <span className="text-xs font-semibold text-accent mt-auto">Open Upload Panel →</span>
+                        <span className="text-sm font-semibold text-accent mt-auto">Open upload panel →</span>
                     </Link>
                     <Link
                         href="/integrations"
-                        className="group flex flex-col gap-3 rounded-3xl border border-zinc-200 bg-white p-7 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all"
+                        className="group flex flex-col gap-3 rounded-2xl border border-black/[.06] dark:border-white/[.08] bg-card p-7 hover:border-accent/50 hover:shadow-sm transition-all"
                     >
-                        <div className="text-3xl">🔌</div>
-                        <h3 className="text-xl font-bold text-black group-hover:text-accent transition-colors">Integrations</h3>
-                        <p className="text-sm text-zinc-500 leading-relaxed">
-                            Connect email (SMTP), Jira, Google Calendar, Slack, Microsoft Teams, GitHub, and Notion to enrich the knowledge base and enable automated workflows.
+                        <h3 className="text-lg font-semibold group-hover:text-accent transition-colors">Integrations</h3>
+                        <p className="text-sm text-muted leading-relaxed">
+                            Connect email (SMTP), Jira, Google Calendar, Slack, Microsoft Teams, GitHub, and
+                            Notion to enrich the knowledge base and enable automated workflows.
                         </p>
-                        <span className="text-xs font-semibold text-accent mt-auto">Manage Integrations →</span>
+                        <span className="text-sm font-semibold text-accent mt-auto">Manage integrations →</span>
                     </Link>
                 </section>
-            </div>
+            </main>
+
+            <footer className="border-t border-black/[.06] dark:border-white/[.08]">
+                <div className="max-w-6xl mx-auto px-6 md:px-8 py-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-muted">
+                    <span>© {new Date().getFullYear()} VaultMind. Private knowledge, kept private.</span>
+                    <div className="flex items-center gap-6">
+                        {navLinks.map((link) => (
+                            <Link key={link.href} href={link.href} className="hover:text-foreground transition-colors">
+                                {link.label}
+                            </Link>
+                        ))}
+                    </div>
+                </div>
+            </footer>
         </div>
     );
 }
