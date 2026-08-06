@@ -19,6 +19,9 @@ interface AuthState {
     dept: string;
 }
 
+const CARD = "rounded-2xl border border-black/[.06] dark:border-white/[.08] bg-card";
+const CARD_HOVER = "hover:border-accent/50 hover:shadow-sm transition-all";
+
 export default function HomeClient({ departments }: HomeClientProps) {
     const router = useRouter();
     const [isChatOpen, setIsChatOpen] = useState(false);
@@ -169,7 +172,7 @@ export default function HomeClient({ departments }: HomeClientProps) {
                     </div>
 
                     <div className="relative mx-auto w-full max-w-sm">
-                        <div className="rounded-2xl border border-black/[.06] dark:border-white/[.08] bg-card shadow-sm p-6">
+                        <div className={`${CARD} shadow-sm p-6`}>
                             <p className="text-xs uppercase tracking-[0.14em] text-muted font-semibold">Onboarding</p>
                             <h3 className="text-xl font-semibold mt-2 transition-all duration-300">{currentStep.title}</h3>
                             <p className="text-sm text-muted mt-2 leading-relaxed min-h-10">
@@ -202,7 +205,7 @@ export default function HomeClient({ departments }: HomeClientProps) {
                         { step: "02", title: "Ask", body: "Ask context-aware questions and iterate using conversation history." },
                         { step: "03", title: "Act", body: "Use source-backed answers for onboarding, compliance, and operations tasks." },
                     ].map((item) => (
-                        <div key={item.step} className="rounded-2xl border border-black/[.06] dark:border-white/[.08] bg-card p-6">
+                        <div key={item.step} className={`${CARD} p-6`}>
                             <span className="text-xs font-semibold text-accent tracking-[0.14em]">{item.step}</span>
                             <h3 className="text-base font-semibold mt-2">{item.title}</h3>
                             <p className="mt-2 text-sm text-muted leading-relaxed">{item.body}</p>
@@ -221,7 +224,7 @@ export default function HomeClient({ departments }: HomeClientProps) {
                                 <Link
                                     key={department.id}
                                     href={`/departments/${department.id}`}
-                                    className="group block rounded-2xl border border-black/[.06] dark:border-white/[.08] bg-card p-6 hover:border-accent/50 hover:shadow-sm transition-all"
+                                    className={`group block ${CARD} p-6 ${CARD_HOVER}`}
                                 >
                                     <h3 className="text-lg font-semibold group-hover:text-accent transition-colors">{department.name}</h3>
                                     <p className="text-sm text-muted mt-1.5">{department.description}</p>
@@ -262,7 +265,7 @@ export default function HomeClient({ departments }: HomeClientProps) {
                         { title: "Grounded responses", body: "RAG answers are anchored to indexed company documents and source context." },
                         { title: "Department workspaces", body: "Dedicated spaces provide focused prompts and assistant behavior per business unit." },
                     ].map((item) => (
-                        <div key={item.title} className="rounded-2xl border border-black/[.06] dark:border-white/[.08] bg-card p-6">
+                        <div key={item.title} className={`${CARD} p-6`}>
                             <span className="h-2 w-2 rounded-full bg-accent inline-block mb-4" />
                             <h3 className="text-base font-semibold mb-2">{item.title}</h3>
                             <p className="text-sm text-muted leading-relaxed">{item.body}</p>
@@ -274,7 +277,7 @@ export default function HomeClient({ departments }: HomeClientProps) {
                 <section className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-24">
                     <Link
                         href="/documents"
-                        className="group flex flex-col gap-3 rounded-2xl border border-black/[.06] dark:border-white/[.08] bg-card p-7 hover:border-accent/50 hover:shadow-sm transition-all"
+                        className={`group flex flex-col gap-3 ${CARD} p-7 ${CARD_HOVER}`}
                     >
                         <h3 className="text-lg font-semibold group-hover:text-accent transition-colors">Document ingestion</h3>
                         <p className="text-sm text-muted leading-relaxed">
@@ -285,7 +288,7 @@ export default function HomeClient({ departments }: HomeClientProps) {
                     </Link>
                     <Link
                         href="/integrations"
-                        className="group flex flex-col gap-3 rounded-2xl border border-black/[.06] dark:border-white/[.08] bg-card p-7 hover:border-accent/50 hover:shadow-sm transition-all"
+                        className={`group flex flex-col gap-3 ${CARD} p-7 ${CARD_HOVER}`}
                     >
                         <h3 className="text-lg font-semibold group-hover:text-accent transition-colors">Integrations</h3>
                         <p className="text-sm text-muted leading-relaxed">

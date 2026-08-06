@@ -1,5 +1,19 @@
 export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
+// Reads the response body once as text, then tries to parse it as JSON for a
+// structured `detail`/`message` field. Calling res.json() and falling back to
+// res.text() on failure is unsafe: a failed res.json() call still consumes the
+// body stream, so the res.text() fallback silently returns an empty string.
+async function extractErrorDetail(res: Response): Promise<string> {
+    const bodyText = await res.text();
+    try {
+        const data = JSON.parse(bodyText);
+        return data?.detail || data?.message || JSON.stringify(data);
+    } catch {
+        return bodyText;
+    }
+}
+
 export interface DepartmentInfo {
     id: string;
     name: string;
@@ -25,14 +39,7 @@ export async function sendChat(question: string, history: string[] = [], token?:
         body: JSON.stringify({ question, history }),
     });
     if (!res.ok) {
-        const bodyText = await res.text();
-        let detail = bodyText;
-        try {
-            const data = JSON.parse(bodyText);
-            detail = data?.detail || data?.message || JSON.stringify(data);
-        } catch {
-            // body wasn't JSON; use the raw text as-is
-        }
+        const detail = await extractErrorDetail(res);
         throw new Error(`Chat failed (${res.status}): ${detail || 'Unknown error'}`);
     }
     return res.json();
@@ -52,13 +59,7 @@ export async function sendTrainerChat(question: string, history: string[] = [], 
             signal: controller.signal,
         });
         if (!res.ok) {
-            let detail = '';
-            try {
-                const data = await res.json();
-                detail = data?.detail || data?.message || JSON.stringify(data);
-            } catch {
-                detail = await res.text();
-            }
+            const detail = await extractErrorDetail(res);
             throw new Error(`Trainer chat failed (${res.status}): ${detail || 'Unknown error'}`);
         }
         return res.json();
@@ -99,13 +100,7 @@ export async function sendDepartmentChat(
         body: JSON.stringify({ question, history }),
     });
     if (!res.ok) {
-        let detail = '';
-        try {
-            const data = await res.json();
-            detail = data?.detail || data?.message || JSON.stringify(data);
-        } catch {
-            detail = await res.text();
-        }
+        const detail = await extractErrorDetail(res);
         throw new Error(`Department chat failed (${res.status}): ${detail || 'Unknown error'}`);
     }
     return res.json();
@@ -126,13 +121,7 @@ export async function sendDepartmentTrainerChat(
         body: JSON.stringify({ question, history }),
     });
     if (!res.ok) {
-        let detail = '';
-        try {
-            const data = await res.json();
-            detail = data?.detail || data?.message || JSON.stringify(data);
-        } catch {
-            detail = await res.text();
-        }
+        const detail = await extractErrorDetail(res);
         throw new Error(`Department trainer chat failed (${res.status}): ${detail || 'Unknown error'}`);
     }
     return res.json();
