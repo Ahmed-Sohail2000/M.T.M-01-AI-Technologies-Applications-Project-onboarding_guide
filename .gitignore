@@ -24,6 +24,9 @@
 .DS_Store
 *.pem
 /rag_backend/secrets/
+/rag_backend/.env
+/rag_backend/*.db
+/rag_backend/chroma_db/
 
 # debug
 npm-debug.log*

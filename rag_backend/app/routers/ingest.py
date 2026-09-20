@@ -1,10 +1,12 @@
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Depends, Query
+from app.core.security import check_admin_role
 from app.services.ingest_chunks import ingest_chunks
 
 router = APIRouter(prefix="/api/v1/ingest")
 
 @router.post("/")
 def trigger_ingestion(
+    current_user: dict = Depends(check_admin_role),
     source: str = Query(
         default="google_drive",
         pattern="^(google_drive|youtube|local|local_folder)$",

@@ -8,9 +8,16 @@ from app.services.rag_service import RAGService
 
 
 @pytest.mark.asyncio
-async def test_generate_returns_helpful_message_on_lm_studio_401():
+async def test_generate_returns_helpful_message_on_nvidia_nim_401():
+    """A 401 from the OpenAI-compatible chat endpoint points at NVIDIA_API_KEY.
+
+    generate() calls _generate_via_openai_compat, which tries NVIDIA NIM
+    first and only falls back to LM Studio on connection failure (not on an
+    auth error) — so any HTTPStatusError 401 that escapes it is attributed
+    to NVIDIA NIM, per CLAUDE.md's documented provider priority.
+    """
     service = RAGService()
-    request = httpx.Request("POST", "http://localhost:1234/v1/chat/completions")
+    request = httpx.Request("POST", "https://integrate.api.nvidia.com/v1/chat/completions")
     response = httpx.Response(401, request=request)
     error = httpx.HTTPStatusError("Unauthorized", request=request, response=response)
 
@@ -22,7 +29,7 @@ async def test_generate_returns_helpful_message_on_lm_studio_401():
         result = await service.generate("", "Hello?")
 
     assert "401 Unauthorized" in result
-    assert "LM Studio" in result
+    assert "NVIDIA NIM" in result
 
 
 @pytest.mark.asyncio

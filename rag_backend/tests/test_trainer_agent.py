@@ -64,7 +64,7 @@ async def test_trainer_returns_offline_fallback_when_lm_studio_unreachable():
     ):
         answer = await agent.answer("What should I do in my first week?", history=[])
 
-    assert "LM Studio is unavailable" in answer
+    assert "NVIDIA NIM and LM Studio are both unavailable" in answer
     assert "Most relevant evidence" in answer
     assert "Onboarding Checklist" in answer
     assert "Week 1 Plan" in answer

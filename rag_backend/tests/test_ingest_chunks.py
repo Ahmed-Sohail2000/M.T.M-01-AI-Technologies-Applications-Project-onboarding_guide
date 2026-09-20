@@ -33,4 +33,4 @@ def test_ingest_chunks_rejects_unknown_source():
         ingest_module.ingest_chunks(source="not-valid")
         assert False, "Expected ValueError"
     except ValueError as exc:
-        assert "source must be either" in str(exc)
+        assert "source must be one of" in str(exc)
