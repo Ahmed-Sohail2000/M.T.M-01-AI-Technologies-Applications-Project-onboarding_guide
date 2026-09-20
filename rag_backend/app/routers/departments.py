@@ -1,7 +1,8 @@
 from typing import List
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 
+from app.core.security import get_current_user
 from app.models.schemas import (
     ChatResponse,
     DepartmentChatRequest,
@@ -30,7 +31,11 @@ def get_department_details(department_id: str) -> DepartmentInfo:
 
 
 @router.post("/{department_id}/chat", response_model=ChatResponse)
-async def department_chat(department_id: str, request: DepartmentChatRequest) -> ChatResponse:
+async def department_chat(
+    department_id: str,
+    request: DepartmentChatRequest,
+    current_user: dict = Depends(get_current_user),
+) -> ChatResponse:
     department = get_department(department_id)
     if department is None:
         raise HTTPException(status_code=404, detail="Department not found")
@@ -51,6 +56,7 @@ async def department_chat(department_id: str, request: DepartmentChatRequest) ->
 async def department_trainer(
     department_id: str,
     request: DepartmentChatRequest,
+    current_user: dict = Depends(get_current_user),
 ) -> TrainerResponse:
     department = get_department(department_id)
     if department is None:

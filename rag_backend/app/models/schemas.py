@@ -5,9 +5,10 @@ from datetime import datetime
 class ChatRequest(BaseModel):
     question: str
     history: Optional[List[str]] = None
-    simple_mode: bool = False
-    """When True, use the lightweight prompt (system + question only).
-    Defaults to False (full CoT + few-shot prompt)."""
+    simple_mode: bool = True
+    """When True (default), use the lightweight prompt (system + question only)
+    for fast responses. Set False to opt into the full CoT + few-shot prompt,
+    which is far slower on local LM Studio/Ollama inference."""
 
 class ChatResponse(BaseModel):
     answer: str

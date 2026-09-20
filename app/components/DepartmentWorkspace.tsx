@@ -1,8 +1,6 @@
 "use client";
 
-import { sendDepartmentChat, sendDepartmentTrainerChat } from "../api/backend";
-import ChatBox from "./ChatBox";
-import TrainerChatBox from "./TrainerChatBox";
+import DepartmentChatDemo from "./DepartmentChatDemo";
 
 interface DepartmentWorkspaceProps {
     id: string;
@@ -11,34 +9,20 @@ interface DepartmentWorkspaceProps {
     info: string;
 }
 
-function getToken(): string | undefined {
-    return typeof window !== 'undefined' ? localStorage.getItem('vaultmind_token') ?? undefined : undefined;
-}
-
 export default function DepartmentWorkspace({ id, name, description, info }: DepartmentWorkspaceProps) {
     return (
         <div className="w-full max-w-4xl flex flex-col gap-6 mx-auto">
-            <h1 className="text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-                {name} Workspace
-            </h1>
-            <p className="text-lg leading-7 text-black/70 dark:text-zinc-400">{info}</p>
+            <div>
+                <h1 className="text-3xl font-semibold tracking-tight">{name} Workspace</h1>
+                <p className="text-base leading-7 text-muted mt-2">{info}</p>
+            </div>
 
-            <section className="p-4 rounded bg-zinc-100 dark:bg-zinc-900">
-                <h2 className="text-lg font-bold mb-2">Department Overview</h2>
-                <p className="text-zinc-700 dark:text-zinc-300">{description}</p>
+            <section className="rounded-2xl border border-border bg-card p-6">
+                <h2 className="text-base font-semibold mb-2">Department Overview</h2>
+                <p className="text-sm text-muted leading-relaxed">{description}</p>
             </section>
 
-            <ChatBox
-                title={`${name} - Main Chat Agent`}
-                onSend={(question, history) => sendDepartmentChat(id, question, history, getToken())}
-            />
-
-            <div className="w-full max-w-lg mx-auto mt-2 p-4 border rounded bg-white dark:bg-zinc-900">
-                <TrainerChatBox
-                    title={`${name} - Trainer Sub-Agent`}
-                    onSend={(question, history) => sendDepartmentTrainerChat(id, question, history, getToken())}
-                />
-            </div>
+            <DepartmentChatDemo departmentId={id} departmentName={name} />
         </div>
     );
 }

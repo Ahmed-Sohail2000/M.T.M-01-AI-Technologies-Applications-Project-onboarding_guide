@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import Link from "next/link";
+import Pagination from "../components/Pagination";
 import {
     createIntegration,
     deleteIntegration,
@@ -133,6 +134,14 @@ export default function IntegrationsPage() {
     const [selectedDef, setSelectedDef] = useState<IntegrationDef | null>(null);
     const [editTarget, setEditTarget] = useState<Integration | null>(null);
     const [testResults, setTestResults] = useState<Record<number, { success: boolean; message: string } | null>>({});
+    const [connectedPage, setConnectedPage] = useState(1);
+
+    const CONNECTED_PER_PAGE = 4;
+    const connectedPageCount = Math.max(1, Math.ceil(integrations.length / CONNECTED_PER_PAGE));
+    const pagedIntegrations = useMemo(
+        () => integrations.slice((connectedPage - 1) * CONNECTED_PER_PAGE, connectedPage * CONNECTED_PER_PAGE),
+        [integrations, connectedPage],
+    );
 
     useEffect(() => {
         setMounted(true);
@@ -221,7 +230,7 @@ export default function IntegrationsPage() {
                     <section>
                         <h2 className="text-lg font-bold text-black mb-4">Connected</h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {integrations.map((intg) => {
+                            {pagedIntegrations.map((intg) => {
                                 const def = INTEGRATION_CATALOGUE.find((d) => d.type === intg.integration_type);
                                 const testResult = testResults[intg.id];
                                 return (
@@ -276,6 +285,12 @@ export default function IntegrationsPage() {
                                 );
                             })}
                         </div>
+                        <Pagination
+                            page={connectedPage}
+                            pageCount={connectedPageCount}
+                            onPageChange={setConnectedPage}
+                            className="mt-4"
+                        />
                     </section>
                 )}
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
     deleteDocument,
     listDocuments,
@@ -9,6 +9,9 @@ import {
     type UploadedDocument,
     type UploadResult,
 } from "../api/backend";
+import Pagination from "./Pagination";
+
+const DOCS_PER_PAGE = 6;
 
 const ALLOWED_TYPES = [
     "application/pdf",
@@ -36,7 +39,18 @@ export default function DocumentUploadPanel({ token, isAdmin = false }: Document
     const [documents, setDocuments] = useState<UploadedDocument[]>([]);
     const [loadingDocs, setLoadingDocs] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
+    const [page, setPage] = useState(1);
     const inputRef = useRef<HTMLInputElement>(null);
+
+    const pageCount = Math.max(1, Math.ceil(documents.length / DOCS_PER_PAGE));
+    const pagedDocuments = useMemo(
+        () => documents.slice((page - 1) * DOCS_PER_PAGE, page * DOCS_PER_PAGE),
+        [documents, page],
+    );
+
+    useEffect(() => {
+        if (page > pageCount) setPage(pageCount);
+    }, [page, pageCount]);
 
     const fetchDocuments = useCallback(async () => {
         if (!token) return;
@@ -121,8 +135,8 @@ export default function DocumentUploadPanel({ token, isAdmin = false }: Document
                 onClick={() => inputRef.current?.click()}
                 className={`relative flex flex-col items-center justify-center rounded-2xl border-2 border-dashed p-10 cursor-pointer transition-colors select-none
           ${isDragging
-                        ? "border-accent bg-cyan-50 dark:bg-cyan-950/20"
-                        : "border-zinc-300 dark:border-zinc-700 hover:border-accent hover:bg-zinc-50 dark:hover:bg-zinc-900/40"
+                        ? "border-accent bg-cyan-50"
+                        : "border-zinc-300 hover:border-accent hover:bg-zinc-50"
                     }`}
             >
                 <input
@@ -138,7 +152,7 @@ export default function DocumentUploadPanel({ token, isAdmin = false }: Document
                 <svg className="w-10 h-10 text-zinc-400 mb-3" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
                 </svg>
-                <p className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
+                <p className="text-sm font-semibold text-zinc-700">
                     Drag &amp; drop files here, or <span className="text-accent underline">browse</span>
                 </p>
                 <p className="text-xs text-zinc-400 mt-1">Supported: {ALLOWED_EXT_LABEL} · Max 50 MB</p>
@@ -147,15 +161,15 @@ export default function DocumentUploadPanel({ token, isAdmin = false }: Document
             {/* Upload Queue */}
             {queue.length > 0 && (
                 <div className="flex flex-col gap-2">
-                    <h3 className="text-sm font-bold text-zinc-600 dark:text-zinc-400 uppercase tracking-wide">Upload Queue</h3>
+                    <h3 className="text-sm font-bold text-zinc-600 uppercase tracking-wide">Upload Queue</h3>
                     {queue.map((entry, i) => (
                         <div
                             key={i}
-                            className="flex items-center justify-between rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-4 py-3 text-sm"
+                            className="flex items-center justify-between rounded-xl border border-zinc-200 bg-white px-4 py-3 text-sm"
                         >
                             <div className="flex items-center gap-3 min-w-0">
                                 <FileIcon ext={entry.file.name.split(".").pop() ?? ""} />
-                                <span className="truncate font-medium text-zinc-800 dark:text-zinc-100">{entry.file.name}</span>
+                                <span className="truncate font-medium text-zinc-800">{entry.file.name}</span>
                                 <span className="text-xs text-zinc-400 shrink-0">{(entry.file.size / 1024).toFixed(1)} KB</span>
                             </div>
                             <StatusBadge entry={entry} />
@@ -173,7 +187,7 @@ export default function DocumentUploadPanel({ token, isAdmin = false }: Document
             {/* Documents Table */}
             <div>
                 <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-sm font-bold text-zinc-600 dark:text-zinc-400 uppercase tracking-wide">
+                    <h3 className="text-sm font-bold text-zinc-600 uppercase tracking-wide">
                         Uploaded Documents
                     </h3>
                     <button
@@ -187,22 +201,22 @@ export default function DocumentUploadPanel({ token, isAdmin = false }: Document
                 {documents.length === 0 ? (
                     <p className="text-sm text-zinc-400 italic">No documents uploaded yet.</p>
                 ) : (
-                    <div className="overflow-x-auto rounded-xl border border-zinc-200 dark:border-zinc-700">
+                    <div className="overflow-x-auto rounded-xl border border-zinc-200">
                         <table className="w-full text-sm">
-                            <thead className="bg-zinc-50 dark:bg-zinc-800 text-zinc-500 text-xs uppercase tracking-wide">
+                            <thead className="bg-zinc-50 text-zinc-500 text-xs uppercase tracking-wide">
                                 <tr>
                                     <th className="px-4 py-2 text-left">Filename</th>
-                                    <th className="px-4 py-2 text-left">Uploaded</th>
+                                    <th className="hidden sm:table-cell px-4 py-2 text-left">Uploaded</th>
                                     {isAdmin && <th className="px-4 py-2 text-right">Actions</th>}
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
-                                {documents.map((doc) => (
-                                    <tr key={doc.id} className="hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors">
-                                        <td className="px-4 py-3 font-medium text-zinc-800 dark:text-zinc-100 max-w-xs truncate">
+                            <tbody className="divide-y divide-zinc-100">
+                                {pagedDocuments.map((doc) => (
+                                    <tr key={doc.id} className="hover:bg-zinc-50 transition-colors">
+                                        <td className="px-4 py-3 font-medium text-zinc-800 max-w-[10rem] sm:max-w-xs truncate">
                                             {doc.filename}
                                         </td>
-                                        <td className="px-4 py-3 text-zinc-400">{doc.uploaded_at ?? "—"}</td>
+                                        <td className="hidden sm:table-cell px-4 py-3 text-zinc-400">{doc.uploaded_at ?? "—"}</td>
                                         {isAdmin && (
                                             <td className="px-4 py-3 text-right flex justify-end gap-2">
                                                 <button
@@ -225,6 +239,8 @@ export default function DocumentUploadPanel({ token, isAdmin = false }: Document
                         </table>
                     </div>
                 )}
+
+                <Pagination page={page} pageCount={pageCount} onPageChange={setPage} className="mt-3" />
             </div>
         </div>
     );

@@ -33,9 +33,9 @@ export default function DocsPage() {
           </p>
           <ul className="list-disc pl-5 text-zinc-700 space-y-1">
             <li>Parsing: PyMuPDF.</li>
-            <li>Embedding model: `nomic-embed-text` for ingestion and retrieval consistency.</li>
+            <li>Embedding model: NVIDIA NIM embeddings, with the same model used for ingestion and retrieval for consistency.</li>
             <li>Vector storage: ChromaDB.</li>
-            <li>Generation model: local Llama model via Ollama.</li>
+            <li>Generation model: NVIDIA NIM (cloud or DGX Spark), falling back to a local LM Studio model when NIM is unreachable.</li>
           </ul>
         </section>
 

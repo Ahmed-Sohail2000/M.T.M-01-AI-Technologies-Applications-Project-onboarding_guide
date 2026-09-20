@@ -76,7 +76,8 @@ describe('ChatBox component', () => {
 
         await waitFor(() => expect(mockSendChat).toHaveBeenCalledWith(
             '[HR] Benefits?',
-            expect.any(Array)
+            expect.any(Array),
+            undefined
         ));
     });
 

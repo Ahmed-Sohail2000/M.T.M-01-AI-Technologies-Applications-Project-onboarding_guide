@@ -54,35 +54,37 @@ export default function ChatBox({ department, title, onSend }: ChatBoxProps) {
     }
 
     return (
-        <div className="w-full max-w-3xl mx-auto mt-8 p-6 border rounded-2xl bg-white shadow-lg dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800">
-            <div className="flex items-center gap-2 mb-6 border-b pb-4">
-                <span className="text-2xl">🔒</span>
-                <h2 className="text-2xl font-extrabold text-primary dark:text-white">{title ?? "Chat with RAG Agent"}</h2>
+        <div className="w-full max-w-3xl mx-auto rounded-2xl border border-border bg-card shadow-sm p-6">
+            <div className="flex items-center gap-2.5 mb-6 border-b border-border pb-4">
+                <span className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center shrink-0">
+                    <span className="h-3 w-3 rounded-full bg-accent" />
+                </span>
+                <h2 className="text-lg font-semibold tracking-tight">{title ?? "Chat with RAG Agent"}</h2>
             </div>
 
-            <div className="space-y-4 mb-6 h-96 overflow-y-auto p-2 rounded-xl bg-zinc-50/70 dark:bg-zinc-950/50 border border-zinc-100 dark:border-zinc-800">
+            <div className="space-y-4 mb-6 h-96 overflow-y-auto p-2 rounded-xl bg-background/60 border border-border">
                 {messages.length === 0 && (
                     <div className="text-center text-muted py-20">
-                        <p className="text-lg font-medium">Welcome to VaultMind</p>
-                        <p className="text-sm">Ask any question about company documents.</p>
+                        <p className="text-base font-medium text-foreground">Welcome to VaultMind</p>
+                        <p className="text-sm mt-1">Ask any question about company documents.</p>
                     </div>
                 )}
                 {messages.map((msg, i) => (
                     <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
-                        <div className={`max-w-[80%] p-3 rounded-lg ${msg.role === "user"
-                            ? "bg-primary text-white rounded-br-none"
-                            : "bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-zinc-100 rounded-bl-none border-l-4 border-accent"
+                        <div className={`max-w-[80%] p-3 rounded-2xl text-sm ${msg.role === "user"
+                            ? "bg-foreground text-background rounded-br-md"
+                            : "bg-card text-foreground rounded-bl-md border border-border accent-border"
                             }`}>
-                            <div className="text-sm whitespace-pre-wrap">{msg.content}</div>
+                            <div className="whitespace-pre-wrap">{msg.content}</div>
 
                             {msg.sources && msg.sources.length > 0 && (
-                                <div className="mt-3 pt-2 border-t border-zinc-300 dark:border-zinc-700">
-                                    <p className="text-xs font-bold text-accent mb-1 uppercase">Sources:</p>
+                                <div className="mt-3 pt-2 border-t border-border">
+                                    <p className="text-xs font-semibold text-accent mb-1 uppercase tracking-wide">Sources</p>
                                     <div className="grid gap-2">
                                         {msg.sources.map((src, idx) => (
-                                            <div key={idx} className="text-[10px] p-2 bg-white dark:bg-zinc-700 rounded-lg border border-zinc-200 dark:border-zinc-600">
-                                                <span className="font-bold text-primary dark:text-white">[{idx + 1}] {src.source}</span>
-                                                <p className="italic text-zinc-600 dark:text-zinc-400">{src.content}</p>
+                                            <div key={idx} className="text-[11px] p-2 bg-background rounded-lg border border-border">
+                                                <span className="font-semibold text-foreground">[{idx + 1}] {src.source}</span>
+                                                <p className="italic text-muted">{src.content}</p>
                                             </div>
                                         ))}
                                     </div>
@@ -93,13 +95,13 @@ export default function ChatBox({ department, title, onSend }: ChatBoxProps) {
                 ))}
                 {loading && (
                     <div className="flex justify-start">
-                        <div className="bg-zinc-100 dark:bg-zinc-800 p-3 rounded-lg rounded-bl-none animate-pulse text-sm shadow-sm">
-                            VaultMind is searching documents...
+                        <div className="bg-card border border-border p-3 rounded-2xl rounded-bl-md animate-pulse text-sm text-muted">
+                            VaultMind is searching documents…
                         </div>
                     </div>
                 )}
                 {error && (
-                    <div className="text-center text-red-500 text-xs mt-2 bg-red-50 p-2 rounded border border-red-100">
+                    <div className="text-center text-red-500 text-xs mt-2 bg-red-500/10 p-2 rounded-lg border border-red-500/20">
                         {error}
                     </div>
                 )}
@@ -108,7 +110,7 @@ export default function ChatBox({ department, title, onSend }: ChatBoxProps) {
 
             <div className="flex gap-2">
                 <input
-                    className="flex-1 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent dark:bg-zinc-800 dark:text-white dark:border-zinc-700"
+                    className="flex-1 rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground placeholder-muted/70 outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition"
                     type="text"
                     value={question}
                     onChange={(e) => setQuestion(e.target.value)}
@@ -117,7 +119,7 @@ export default function ChatBox({ department, title, onSend }: ChatBoxProps) {
                     disabled={loading}
                 />
                 <button
-                    className="bg-primary text-white px-6 py-3 rounded-lg font-bold hover:bg-opacity-90 transition-all disabled:bg-zinc-400"
+                    className="bg-foreground text-background px-6 py-3 rounded-xl font-semibold text-sm hover:opacity-90 transition-opacity disabled:opacity-40"
                     onClick={handleSend}
                     disabled={loading || !question.trim()}
                 >

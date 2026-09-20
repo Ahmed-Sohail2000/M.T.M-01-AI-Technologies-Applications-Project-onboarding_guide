@@ -1,44 +1,93 @@
 @import "tailwindcss";
 
+/*
+ * VaultMind design tokens — light by default, with an explicit opt-in dark
+ * mode. Business buyers evaluating this tool expect a clean white surface
+ * on first load, so the default is NOT driven by prefers-color-scheme —
+ * dark only activates when the person turns it on via the theme toggle,
+ * which sets data-theme="dark" on <html> and persists it to localStorage
+ * (see the inline script in app/layout.tsx that applies it pre-paint).
+ */
 :root {
-  --background: #F4F6FA;
-  --foreground: #0D1B2A;
-  --primary: #0D1B2A;
-  --accent: #00B4D8;
-  --card: #ffffff;
-  --text-muted: #666666;
+  --background: #FFFFFF;
+  --surface: #F8FAFC;
+  --foreground: #0F172A;
+  --primary: #101828;
+  --accent: #2563EB;
+  --accent-soft: #EFF4FF;
+  --success: #16A34A;
+  --card: #FFFFFF;
+  --border: #E2E8F0;
+  --text-muted: #64748B;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #05070A;
-    --foreground: #EDF1F7;
-    --primary: #0D1B2A;
-    --accent: #22D3EE;
-    --card: #12181f;
-    --text-muted: #9CA6B4;
-  }
+:root[data-theme="dark"] {
+  --background: #06080D;
+  --surface: #0E121B;
+  --foreground: #F1F5F9;
+  --primary: #1C2536;
+  --accent: #5B9CFF;
+  --accent-soft: rgba(91, 156, 255, 0.14);
+  --success: #22C55E;
+  --card: #0C1018;
+  --border: #212836;
+  --text-muted: #93A0B4;
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-surface: var(--surface);
   --color-foreground: var(--foreground);
   --color-primary: var(--primary);
   --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-success: var(--success);
   --color-card: var(--card);
+  --color-border: var(--border);
   --color-muted: var(--text-muted);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+}
+
+:root {
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: 'Inter', sans-serif;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+/*
+ * Tailwind's preflight resets `a { color: inherit }`, but a browser's
+ * built-in `a:visited` rule has higher specificity and still wins — so any
+ * in-page anchor link (e.g. href="#how-it-works") silently changes color
+ * the moment it's clicked once, which reads as a UI bug ("the button keeps
+ * changing color"). Pin it to inherit as a base-layer fallback.
+ *
+ * This MUST live in @layer base, not as a bare rule. Tailwind wraps all of
+ * its own output in `@layer theme, base, components, utilities`, and layer
+ * order beats specificity: an unlayered rule beats every layered rule no
+ * matter how low its specificity is. A bare `a:visited { color: inherit }`
+ * therefore silently clobbers explicit utilities like `text-white` on any
+ * <Link> (e.g. the active department pill, which went dark-on-dark and
+ * unreadable) — it must sit in `base` so `utilities` classes still win.
+ */
+@layer base {
+  a:link,
+  a:visited {
+    color: inherit;
+  }
 }
 
 .vault-gradient {
-  background: linear-gradient(135deg, #0D1B2A 0%, #1565C0 100%);
+  background: linear-gradient(135deg, #101828 0%, #2563EB 100%);
 }
 
 .accent-border {
