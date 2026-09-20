@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run dev:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm run lint:*)",
+      "Bash(npm run test:*)",
+      "Bash(python -m uvicorn app.main:app:*)",
+      "Bash(curl -s http://localhost:8000/*)",
+      "Bash(curl -s http://localhost:3000*)",
+      "Bash(python -m pytest:*)"
+    ]
+  }
+}
