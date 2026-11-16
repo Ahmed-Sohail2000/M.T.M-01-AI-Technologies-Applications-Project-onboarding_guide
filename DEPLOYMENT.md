@@ -55,6 +55,10 @@ push to main ─ same gates ─→ deploy-production → vercel --prod → smoke
 
    With the GitHub CLI: `gh secret set VERCEL_TOKEN`, etc.
 
+   Also add the repository **variable** `PRODUCTION_URL` (e.g. `https://vaultmind-gilt.vercel.app`).
+   The post-deploy smoke test hits it, because per-deployment `*.vercel.app` URLs are behind
+   Vercel Authentication and answer `302` to anonymous requests.
+
 4. **Protect production** (recommended): Settings → Environments → `production` →
    add required reviewers; Settings → Branches → protect `main` and require the
    `Frontend · …` and `Backend · pytest` checks.
