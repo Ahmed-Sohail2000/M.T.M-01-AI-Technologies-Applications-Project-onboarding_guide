@@ -167,7 +167,7 @@ jobs:
     # for a manual approval gate before production.
     environment:
       name: production
-      url: ${{ steps.deploy.outputs.url }}
+      url: ${{ vars.PRODUCTION_URL || steps.deploy.outputs.url }}
     concurrency:
       group: vercel-production
       cancel-in-progress: false
@@ -207,7 +207,10 @@ jobs:
 
       - name: Smoke test
         env:
-          URL: ${{ steps.deploy.outputs.url }}
+          # Per-deployment *.vercel.app URLs sit behind Vercel Authentication
+          # (302 to SSO), so test the public production domain. Set the repo
+          # variable PRODUCTION_URL (Settings -> Variables) to your domain.
+          URL: ${{ vars.PRODUCTION_URL || steps.deploy.outputs.url }}
         run: |
           for path in / /login /docs; do
             code=$(curl -s -o /dev/null -w '%{http_code}' --retry 5 --retry-delay 5 --retry-all-errors "$URL$path")
