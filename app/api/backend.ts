@@ -63,8 +63,8 @@ export async function sendTrainerChat(question: string, history: string[] = [], 
             throw new Error(`Trainer chat failed (${res.status}): ${detail || 'Unknown error'}`);
         }
         return res.json();
-    } catch (error: any) {
-        if (error?.name === 'AbortError') {
+    } catch (error: unknown) {
+        if (error instanceof Error && error.name === 'AbortError') {
             throw new Error('Trainer request timed out after 60s. Please try again.');
         }
         throw error;
