@@ -11,7 +11,7 @@ interface ChatBoxProps {
 interface Message {
     role: "user" | "assistant";
     content: string;
-    sources?: any[];
+    sources?: { source?: string; content?: string }[];
 }
 
 export default function ChatBox({ department, title, onSend }: ChatBoxProps) {
@@ -46,8 +46,8 @@ export default function ChatBox({ department, title, onSend }: ChatBoxProps) {
                 : sendChat(questionToSend, history, token));
             setMessages((prev) => [...prev, { role: "assistant", content: res.answer, sources: res.sources }]);
             setHistory((prev) => [...prev, questionToSend]);
-        } catch (e: any) {
-            setError(e.message || "Failed to fetch response from VaultMind");
+        } catch (e: unknown) {
+            setError((e instanceof Error && e.message) || "Failed to fetch response from VaultMind");
         } finally {
             setLoading(false);
         }

@@ -83,3 +83,6 @@ next-env.d.ts
 *.aac
 *.raw
 *.RAW
+
+# allow committed env templates
+!.env.example

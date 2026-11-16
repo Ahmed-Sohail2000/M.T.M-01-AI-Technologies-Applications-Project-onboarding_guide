@@ -1,0 +1,13 @@
+# Only the Next.js frontend is deployed to Vercel. The FastAPI backend, source
+# documents and local artifacts are excluded from the upload.
+rag_backend
+help
+hlep
+Knowledge
+uploads
+coverage
+.idea
+.junie
+.claude
+*.html
+*.csv

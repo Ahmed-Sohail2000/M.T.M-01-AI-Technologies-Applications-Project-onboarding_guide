@@ -48,6 +48,8 @@ export default function DepartmentChatDemo({ departmentId, departmentName }: Dep
         }
     }, [messages, thinking]);
 
+    const THINKING_DELAY_MS = 800;
+
     function ask(question: string) {
         if (!question.trim() || thinking) return;
         setMessages((prev) => [...prev, { role: "user", text: question }]);
@@ -58,7 +60,7 @@ export default function DepartmentChatDemo({ departmentId, departmentName }: Dep
         window.setTimeout(() => {
             setMessages((prev) => [...prev, { role: "assistant", text: answer, source }]);
             setThinking(false);
-        }, 600 + Math.random() * 500);
+        }, THINKING_DELAY_MS);
     }
 
     return (

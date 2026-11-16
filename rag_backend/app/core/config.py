@@ -16,6 +16,8 @@ class Settings(BaseSettings):
     VECTOR_DB_URL: str = ""
     DATABASE_URL: str = "postgresql://postgres:postgres@localhost:5432/postgres"
     CORS_ORIGINS: List[str] = []
+    # Optional regex for allowed origins (e.g. Vercel preview URLs).
+    CORS_ORIGIN_REGEX: str = ""
 
     # LM Studio (active provider via the OpenAI-compatible HTTP endpoint)
     LM_STUDIO_BASE_URL: str = "http://localhost:1234"
