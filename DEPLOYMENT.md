@@ -1,5 +1,7 @@
 # Deployment & CI/CD
 
+Production: **https://vaultmind-gilt.vercel.app** (Vercel project `vaultmind`)
+
 ## Topology
 
 | Component | Where it runs | Notes |
@@ -81,3 +83,9 @@ commit on `main` so the next deploy doesn't reintroduce it.
 npm ci && npm run lint && npm run typecheck && npm test && npm run build
 cd rag_backend && DATABASE_URL=sqlite:///./ci_test.db python -m pytest -q
 ```
+
+## Known local gotcha
+
+`vercel build` on Windows fails with `EPERM ... symlink` unless Developer Mode
+is enabled (Vercel's builder cache uses symlinks). CI runs on Linux and is
+unaffected; locally, use `vercel deploy` (remote build) instead.
